@@ -1,0 +1,28 @@
+clc
+clear
+J = zeros(256,256);
+
+
+for m = 1:256       %loops through each row of pixels
+    W = zeros(500,500);     % initialize and reset W for each loop
+    for n = 1:360       %loops through each camera image (1 degree increments) 
+        S1 = 'I1 - Copy (';
+        S2 = num2str(n);
+        S3 = ').tif';
+        I = imread(strcat(S1,S2,S3));       %concatenates a string allowing to read in images I1, I2, I3, ...etc.
+        
+            for a = 1:256               
+                J(a,1:256) = I(m,1:256);    %sets every row of J equal to the mth row of an I image
+            end
+            
+         L = padarray(J,[122 122]);         %pads the outside of J with empty (black) pixels (for white include ",255" to round brackets)
+         F = imrotate(L,(n-1),'nearest','crop');        %rotates this image by n-1 degrees, forcing a constant size of 500*500
+         
+         W = W + F./92160;      %iteratively adds the "F-images" to create an average W. Here the F is divided by a large number to keep the range of values sensible
+       
+         
+         
+    end
+    
+    imwrite(W,strcat('K',num2str(m),'.tif'))        %Writes W as a new image file K1, K2, etc.
+end
